@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Happy Birthday 🎉</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      color: white;
+      overflow: hidden;
+      background: linear-gradient(270deg, #4facfe, #00f2fe);
+      background-size: 400% 400%;
+      animation: bgMove 10s infinite alternate;
+    }
+
+    @keyframes bgMove {
+      0% {background-position: left;}
+      100% {background-position: right;}
+    }
+
+    .page {
+      display: none;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease;
+      padding-top: 80px;
+    }
+
+    .active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .card {
+      background: rgba(255,255,255,0.12);
+      padding: 25px;
+      margin: 20px auto;
+      border-radius: 20px;
+      backdrop-filter: blur(15px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+      width: 85%;
+      max-width: 400px;
+    }
+
+    input, button {
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      background: rgba(255,255,255,0.9);
+      color: #007BFF;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    img {
+      width: 200px;
+      border-radius: 15px;
+      margin: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+
+    #cake {
+      width: 240px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(255,255,255,0.6);
+    }
+
+    .spark {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .flash {
+      position: fixed;
+      top:0; left:0;
+      width:100%; height:100%;
+      background:white;
+      opacity:0;
+      pointer-events:none;
+    }
+
+    #bigMsg, #celeMsg {
+      display:none;
+      margin-top:20px;
+      font-size:28px;
+      font-weight:bold;
+    }
+
+  </style>
+</head>
+
+<body onclick="launchFireworks(event)">
+
+<div id="flash" class="flash"></div>
+
+<!-- PAGE 1 -->
+<div id="page1" class="page active">
+  <div class="card">
+    <h2>Enter Password 🔐</h2>
+    <p style="font-size:14px;">Hint: last 4 digits of something special 😉</p>
+    <input type="password" id="pass">
+    <br>
+    <button onclick="checkPass()">Unlock 🎁</button>
+    <p id="wrong"></p>
+  </div>
+</div>
+
+<!-- PAGE 2 -->
+<div id="page2" class="page">
+  <div class="card">
+    <h1 id="typingText"></h1>
+    <button onclick="revealMsg()">🎆 Surprise</button>
+
+    <div id="bigMsg">
+      🎉 HAPPY BIRTHDAY 🎉 <br>
+      Stay Happy Always 💙
+    </div>
+
+    <br>
+    <button onclick="nextPage()">Next ➡️</button>
+  </div>
+</div>
+
+<!-- PAGE 3 -->
+<div id="page3" class="page">
+
+  <div class="card">
+    <h2>✨ Memories ✨</h2>
+  </div>
+
+  <img src="https://via.placeholder.com/200">
+  <img src="https://via.placeholder.com/200">
+  <img src="https://via.placeholder.com/200">
+
+  <!-- CAKE -->
+  <div style="margin-top:20px; position:relative; display:inline-block;">
+
+    <img id="cake"
+      src="https://cdn.pixabay.com/photo/2016/03/05/19/02/cake-1239240_1280.jpg"
+      onclick="blowCandle()">
+
+    <!-- NAME -->
+    <div style="
+      position:absolute;
+      top:55%; left:50%;
+      transform:translate(-50%,-50%);
+      font-size:22px;
+      font-weight:bold;
+      text-shadow:2px 2px 5px black;">
+      YOUR NAME 💙
+    </div>
+
+    <!-- FLAMES -->
+    <div id="flames" style="
+      position:absolute;
+      top:15%;
+      left:50%;
+      transform:translateX(-50%);
+      font-size:22px;">
+      🕯️ 🕯️ 🕯️
+    </div>
+
+  </div>
+
+  <p id="cakeMsg" style="display:none;">
+    🎉 Wish made! Happy Birthday 🎂
+  </p>
+
+  <button onclick="celebrate()">🎉 Let’s Celebrate</button>
+
+  <div id="celeMsg">
+    🎆 Let’s Celebrate 🎆 <br>
+    Have an amazing year 💙
+  </div>
+
+</div>
+
+<!-- AUDIO -->
+<audio id="bgmusic">
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_5c6c4b8c71.mp3?filename=happy-birthday-33474.mp3">
+</audio>
+
+<audio id="crackSound">
+  <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_c0a4a6d1a3.mp3?filename=firework-explosion-1-6845.mp3">
+</audio>
+
+<audio id="blowSound">
+  <source src="https://cdn.pixabay.com/download/audio/2021/08/09/audio_884fe92c49.mp3?filename=blow-into-microphone-7062.mp3">
+</audio>
+
+<script>
+
+function checkPass() {
+  if(document.getElementById("pass").value === "1234") {
+    document.getElementById("page1").classList.remove("active");
+    document.getElementById("page2").classList.add("active");
+    typeEffect();
+  } else {
+    document.getElementById("wrong").innerText = "Wrong password 😅";
+  }
+}
+
+function nextPage() {
+  document.getElementById("page2").classList.remove("active");
+  document.getElementById("page3").classList.add("active");
+}
+
+const text = "Happy Birthday 🎂";
+let i = 0;
+function typeEffect() {
+  if (i < text.length) {
+    document.getElementById("typingText").innerHTML += text.charAt(i);
+    i++;
+    setTimeout(typeEffect, 80);
+  }
+}
+
+function revealMsg() {
+  let music = document.getElementById("bgmusic");
+  music.currentTime = 0;
+  music.play();
+
+  document.getElementById("bigMsg").style.display = "block";
+
+  for (let i = 0; i < 5; i++) {
+    setTimeout(() => {
+      launchFireworks();
+      playCrack();
+    }, i * 350);
+  }
+}
+
+function playCrack() {
+  let s = document.getElementById("crackSound");
+  s.currentTime = 0;
+  s.play();
+}
+
+function celebrate() {
+  document.getElementById("celeMsg").style.display = "block";
+
+  for (let i = 0; i < 8; i++) {
+    setTimeout(() => {
+      launchFireworks();
+      playCrack();
+    }, i * 300);
+  }
+}
+
+function blowCandle() {
+  let sound = document.getElementById("blowSound");
+  sound.play();
+
+  document.getElementById("flames").style.opacity = 0;
+
+  setTimeout(() => {
+    document.getElementById("cakeMsg").style.display = "block";
+    launchFireworks();
+  }, 600);
+}
+
+function launchFireworks(e) {
+  let flash = document.getElementById("flash");
+  flash.style.opacity = 0.4;
+  setTimeout(() => flash.style.opacity = 0, 100);
+
+  let x = e ? e.clientX : window.innerWidth/2;
+  let y = e ? e.clientY : window.innerHeight/2;
+
+  for (let i = 0; i < 70; i++) {
+    let spark = document.createElement("div");
+    spark.classList.add("spark");
+    document.body.appendChild(spark);
+
+    spark.style.left = x + "px";
+    spark.style.top = y + "px";
+
+    let angle = Math.random() * 2 * Math.PI;
+    let distance = Math.random() * 200;
+
+    spark.style.background = `hsl(${Math.random()*360},100%,70%)`;
+    spark.style.boxShadow = "0 0 10px white";
+
+    spark.animate([
+      { transform: "translate(0,0)", opacity: 1 },
+      { transform: `translate(${Math.cos(angle)*distance}px, ${Math.sin(angle)*distance}px)`, opacity: 0 }
+    ], { duration: 1200 });
+
+    setTimeout(() => spark.remove(), 1200);
+  }
+}
+
+</script>
+
+</body>
+</html>
